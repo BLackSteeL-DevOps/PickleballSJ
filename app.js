@@ -145,23 +145,23 @@ function displayResults() {
 
 /**
  * AFFICHAGE DU CALENDRIER (Onglet 1)
- * Crée le tableau des parties
+ * Crée le tableau des parties - 2 COLONNES PAR TERRAIN
  */
 function displayCalendar() {
     const container = document.getElementById('calendrierContent');
     
     // Créer le tableau HTML
-    let html = '<table>';
+    let html = '<table style="width: 100%;">';
     
-    // En-tête
+    // En-tête - 2 COLONNES PAR TERRAIN
     html += '<thead><tr>';
-    html += '<th>Partie</th>';
+    html += '<th style="background-color: #9ACD32; color: white;">Partie</th>';
     
     for (let court = 1; court <= scheduler.numCourts; court++) {
-        html += `<th colspan="2">Terrain ${court}</th>`;
+        html += `<th colspan="2" style="background-color: #9ACD32; color: white;">Terrain ${court}</th>`;
     }
     
-    html += '<th>Banc</th>';
+    html += '<th style="background-color: #F8CBCB;">Banc</th>';
     html += '</tr></thead>';
     
     // Corps du tableau
@@ -169,16 +169,16 @@ function displayCalendar() {
     
     currentSchedule.forEach(round => {
         html += '<tr>';
-        html += `<td><strong>${round.round}</strong></td>`;
+        html += `<td style="text-align: center;"><strong>${round.round}</strong></td>`;
         
-        // Pour chaque terrain
+        // Pour chaque terrain - 2 COLONNES (Équipe 1 et Équipe 2)
         round.matches.forEach(match => {
-            html += `<td>${formatPlayers(match.team1)}</td>`;
-            html += `<td>${formatPlayers(match2)}</td>`;
+            html += `<td style="text-align: center;">${formatPlayers(match.team1)}</td>`;
+            html += `<td style="text-align: center;">${formatPlayers(match.team2)}</td>`;
         });
         
         // Joueurs au repos
-        html += `<td class="resting">${formatPlayers(round.resting)}</td>`;
+        html += `<td class="resting" style="background-color: #F8CBCB; text-align: center;">${formatPlayers(round.resting)}</td>`;
         html += '</tr>';
     });
     
@@ -262,35 +262,52 @@ function displayStatistics() {
     
     let html = '';
     
-    // Score de qualité (grand)
+    // Score de qualité (grand) avec explication détaillée
     html += `<div class="quality-score">`;
     html += `<h2>🏆 Score de Qualité</h2>`;
     html += `<div class="score">${qualityScore}/100</div>`;
     html += `<div class="assessment">${getQualityAssessment(qualityScore)}</div>`;
+    
+    // EXPLICATION DÉTAILLÉE DU SCORE
+    html += `<div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px; text-align: left; font-size: 14px;">`;
+    html += `<strong>📖 Comment interpréter ce score?</strong><br><br>`;
+    html += `<strong>Score 100/100:</strong> Configuration PARFAITE - Tous les joueurs jouent exactement le même nombre de parties, aucun partenaire ou adversaire répété, distribution parfaite des terrains.<br><br>`;
+    html += `<strong>Score 75-99:</strong> Excellente configuration - Légères répétitions acceptables, très bon équilibre général.<br><br>`;
+    html += `<strong>Score 50-74:</strong> Bonne configuration - Quelques répétitions, équilibre correct avec compromis mineurs.<br><br>`;
+    html += `<strong>Score 0-49:</strong> Configuration avec compromis - Plusieurs répétitions ou déséquilibres importants. Cliquez "Regénérer" pour essayer d'améliorer.<br><br>`;
+    html += `<strong>⚠️ Score 0/100:</strong> Configuration TRÈS déséquilibrée - Beaucoup de répétitions, écarts importants dans le temps de jeu. Il est FORTEMENT recommandé de regénérer plusieurs fois jusqu'à obtenir un score d'au moins 60/100.`;
+    html += `</div>`;
     html += `</div>`;
     
-    // Cartes de statistiques
+    // Cartes de statistiques (GRILLE 2x2)
     html += `<div class="stats-container">`;
     
-    // Équité
+    // Carte 1: Équité
     html += `<div class="stat-card">`;
     html += `<h3>📊 Équité du temps de jeu</h3>`;
     html += `<div class="stat-value">${maxGames - minGames}</div>`;
     html += `<div class="stat-label">Écart parties (0 = parfait)</div>`;
     html += `</div>`;
     
-    // Partenaires
+    // Carte 2: Partenaires
     html += `<div class="stat-card">`;
     html += `<h3>🤝 Répétitions partenaires</h3>`;
-    html += `<div class="stat-value">${currentAnalysis.partnerRepeatDetails.length}</div>`;
-    html += `<div class="stat-label">Paires répétées</div>`;
+    html += `<div class="stat-value">${currentAnalysis.maxPartnerRepeats}</div>`;
+    html += `<div class="stat-label">Max répétitions (1 = parfait)</div>`;
     html += `</div>`;
     
-    // Terrains
+    // Carte 3: Terrains
     html += `<div class="stat-card">`;
     html += `<h3>🏟️ Équilibre terrains</h3>`;
     html += `<div class="stat-value">${currentAnalysis.maxCourtImbalance}</div>`;
     html += `<div class="stat-label">Écart max (0 = parfait)</div>`;
+    html += `</div>`;
+    
+    // Carte 4: Répétitions adversaires (MAX au lieu du nombre de paires)
+    html += `<div class="stat-card">`;
+    html += `<h3>⚔️ Répétitions adversaires</h3>`;
+    html += `<div class="stat-value">${currentAnalysis.maxOpponentRepeats}</div>`;
+    html += `<div class="stat-label">Max répétitions (1 = parfait)</div>`;
     html += `</div>`;
     
     html += `</div>`;
@@ -301,6 +318,15 @@ function displayStatistics() {
         html += `<h4>🤝 Détail des répétitions de partenaires:</h4>`;
         currentAnalysis.partnerRepeatDetails.forEach(([p1, p2, count]) => {
             html += `<div>J${p1} + J${p2}: <strong>${count} fois</strong></div>`;
+        });
+        html += `</div>`;
+    }
+    
+    if (currentAnalysis.opponentRepeatDetails.length > 0) {
+        html += `<div class="legend">`;
+        html += `<h4>⚔️ Détail des répétitions d'adversaires:</h4>`;
+        currentAnalysis.opponentRepeatDetails.forEach(([p1, p2, count]) => {
+            html += `<div>J${p1} vs J${p2}: <strong>${count} fois</strong></div>`;
         });
         html += `</div>`;
     }
