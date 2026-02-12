@@ -1,0 +1,549 @@
+/**
+ * ============================================
+ * FEUILLE DE STYLE CSS
+ * Application Web - Générateur de Cédules
+ * Pickleball Sainte-Julie
+ * ============================================
+ */
+
+/* ========================================
+   VARIABLES CSS (Couleurs du thème)
+   ======================================== */
+:root {
+    /* Couleurs principales basées sur le logo */
+    --primary-green: #9ACD32;      /* Vert lime du logo */
+    --dark-blue: #1e3a8a;          /* Bleu foncé pour les titres */
+    --light-gray: #f0f0f0;         /* Gris clair pour l'arrière-plan */
+    --medium-gray: #e0e0e0;        /* Gris moyen pour les bordures */
+    --dark-gray: #333;             /* Gris foncé pour le texte */
+    
+    /* Couleurs d'action */
+    --success-green: #10b981;      /* Vert pour succès */
+    --warning-yellow: #fbbf24;     /* Jaune pour avertissement */
+    --info-blue: #3b82f6;          /* Bleu pour info */
+    --danger-red: #ef4444;         /* Rouge pour erreur */
+    
+    /* Couleurs pour les tableaux */
+    --table-header: #366092;       /* En-tête tableau */
+    --perfect-green: #C6E0B4;      /* Vert clair (score parfait) */
+    --good-yellow: #FFE699;        /* Jaune (bon score) */
+    --warning-orange: #F4B084;     /* Orange (à améliorer) */
+}
+
+/* ========================================
+   RÉINITIALISATION ET BASE
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+    line-height: 1.6;
+}
+
+/* ========================================
+   CONTENEUR PRINCIPAL
+   ======================================== */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========================================
+   EN-TÊTE (LOGOS + TITRE)
+   ======================================== */
+.app-header {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.logo-container {
+    flex: 0 0 120px;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.title-container {
+    flex: 1;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.main-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #666;
+}
+
+/* ========================================
+   CONTENU PRINCIPAL
+   ======================================== */
+.main-content {
+    flex: 1;
+}
+
+/* ========================================
+   SECTION PARAMÈTRES + BOUTONS (Layout 50/50)
+   ======================================== */
+.input-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* 2 colonnes égales */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Panneau paramètres (gauche) */
+.parameters-panel {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Panneau boutons (droite) */
+.actions-panel {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+}
+
+.panel-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: var(--dark-blue);
+    border-bottom: 2px solid var(--primary-green);
+    padding-bottom: 10px;
+}
+
+/* ========================================
+   FORMULAIRE
+   ======================================== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--medium-gray);
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+}
+
+/* ========================================
+   BOUTONS
+   ======================================== */
+.btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    width: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Bouton principal (vert lime) */
+.btn-primary {
+    background-color: var(--primary-green);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #8ab82e;
+}
+
+/* Bouton large pour "Générer" */
+.btn-large {
+    padding: 20px 40px;
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+/* Bouton Regénérer (jaune) */
+.btn-warning {
+    background-color: var(--warning-yellow);
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #f59e0b;
+}
+
+/* Bouton Export Excel (vert) */
+.btn-success {
+    background-color: var(--success-green);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+/* Bouton Export PDF (bleu) */
+.btn-info {
+    background-color: var(--info-blue);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #2563eb;
+}
+
+/* ========================================
+   BARRE DE PROGRESSION
+   ======================================== */
+.progress-container {
+    margin-bottom: 20px;
+}
+
+.progress-label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--dark-gray);
+    text-align: center;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 30px;
+    background-color: var(--medium-gray);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-green), var(--success-green));
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* ========================================
+   SECTION RÉSULTATS (ONGLETS)
+   ======================================== */
+.results-section {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* En-têtes des onglets */
+.tabs-header {
+    display: flex;
+    background-color: var(--medium-gray);
+    border-bottom: 3px solid var(--primary-green);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--dark-gray);
+}
+
+.tab-button:hover {
+    background-color: rgba(154, 205, 50, 0.1);
+}
+
+.tab-button.active {
+    background-color: white;
+    color: var(--primary-green);
+    border-bottom: 3px solid var(--primary-green);
+}
+
+/* Contenu des onglets */
+.tabs-content {
+    padding: 30px;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* ========================================
+   TABLEAUX
+   ======================================== */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--medium-gray);
+}
+
+th {
+    background-color: var(--primary-green);
+    color: white;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: rgba(154, 205, 50, 0.1);
+}
+
+/* Couleurs spéciales pour les cellules */
+.perfect {
+    background-color: var(--perfect-green) !important;
+}
+
+.good {
+    background-color: var(--good-yellow) !important;
+}
+
+.warning {
+    background-color: var(--warning-orange) !important;
+}
+
+.resting {
+    background-color: #fecaca !important;
+    font-style: italic;
+}
+
+/* ========================================
+   STATISTIQUES
+   ======================================== */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.stat-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.stat-card .stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-card .stat-label {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Score de qualité */
+.quality-score {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--success-green) 100%);
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.quality-score h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.quality-score .score {
+    font-size: 72px;
+    font-weight: bold;
+    color: white;
+}
+
+.quality-score .assessment {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* ========================================
+   LÉGENDES
+   ======================================== */
+.legend {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-left: 4px solid var(--primary-green);
+}
+
+.legend h4 {
+    margin-bottom: 10px;
+    color: var(--dark-blue);
+}
+
+.legend-item {
+    display: inline-block;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+/* ========================================
+   PIED DE PAGE
+   ======================================== */
+.app-footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* ========================================
+   RESPONSIVE (Mobile/Tablette)
+   ======================================== */
+@media (max-width: 768px) {
+    /* Layout vertical sur mobile */
+    .input-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .app-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .logo-container {
+        margin-bottom: 15px;
+    }
+    
+    .tabs-header {
+        flex-wrap: wrap;
+    }
+    
+    .tab-button {
+        flex: 1 1 50%;  /* 2 par ligne sur mobile */
+        font-size: 14px;
+        padding: 12px 10px;
+    }
+    
+    .main-title {
+        font-size: 24px;
+    }
+    
+    .subtitle {
+        font-size: 14px;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Spinner de chargement */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    border: 4px solid var(--medium-gray);
+    border-top: 4px solid var(--primary-green);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}

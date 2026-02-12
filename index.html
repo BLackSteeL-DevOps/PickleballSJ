@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Cédules - Pickleball Sainte-Julie</title>
+    
+    <!-- Lien vers la feuille de style CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Bibliothèques externes nécessaires -->
+    <!-- SheetJS pour générer les fichiers Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- jsPDF pour générer les fichiers PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal de l'application -->
+    <div class="app-container">
+        
+        <!-- ========================================
+             EN-TÊTE AVEC LOGOS ET TITRE
+             ======================================== -->
+        <header class="app-header">
+            <!-- Logo gauche -->
+            <div class="logo-container">
+                <img src="logo_pickleball.png" alt="Pickleball Sainte-Julie" class="logo">
+            </div>
+            
+            <!-- Titre central -->
+            <div class="title-container">
+                <h1 class="main-title">GÉNÉRATEUR DE CÉDULE</h1>
+                <p class="subtitle">Pickleball • Sainte-Julie</p>
+            </div>
+            
+            <!-- Logo droit -->
+            <div class="logo-container">
+                <img src="logo_pickleball.png" alt="Pickleball Sainte-Julie" class="logo">
+            </div>
+        </header>
+
+        <!-- ========================================
+             ZONE DE CONTENU PRINCIPALE
+             ======================================== -->
+        <main class="main-content">
+            
+            <!-- ========================================
+                 SECTION 1: PARAMÈTRES + BOUTONS
+                 Layout: 50% paramètres (gauche) | 50% boutons (droite)
+                 ======================================== -->
+            <section class="input-section">
+                
+                <!-- Paramètres du tournoi (gauche - 50%) -->
+                <div class="parameters-panel">
+                    <h2 class="panel-title">⚙ Paramètres du Tournoi</h2>
+                    
+                    <!-- Nombre de joueurs -->
+                    <div class="form-group">
+                        <label for="numPlayers">Nombre de joueurs:</label>
+                        <input type="number" id="numPlayers" min="4" max="50" value="14" class="form-input">
+                    </div>
+                    
+                    <!-- Nombre de terrains -->
+                    <div class="form-group">
+                        <label for="numCourts">Nombre de terrains:</label>
+                        <input type="number" id="numCourts" min="1" max="10" value="3" class="form-input">
+                    </div>
+                    
+                    <!-- Nombre de parties -->
+                    <div class="form-group">
+                        <label for="numRounds">Nombre de parties:</label>
+                        <input type="number" id="numRounds" min="1" max="30" value="10" class="form-input">
+                    </div>
+                    
+                    <!-- Durée par partie -->
+                    <div class="form-group">
+                        <label for="minutesPerRound">Durée par partie (min):</label>
+                        <input type="number" id="minutesPerRound" min="5" max="60" value="11" class="form-input">
+                    </div>
+                </div>
+                
+                <!-- Boutons d'action (droite - 50%) -->
+                <div class="actions-panel">
+                    <!-- Barre de progression (cachée au départ) -->
+                    <div id="progressContainer" class="progress-container" style="display: none;">
+                        <div class="progress-label" id="progressLabel">Génération en cours...</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton principal: Générer (toujours visible) -->
+                    <button id="generateBtn" class="btn btn-primary btn-large">
+                        🎲 GÉNÉRER LA CÉDULE
+                    </button>
+                    
+                    <!-- Bouton Regénérer (caché au départ) -->
+                    <button id="regenerateBtn" class="btn btn-warning" style="display: none;">
+                        🔄 Regénérer
+                    </button>
+                    
+                    <!-- Conteneur pour boutons d'export (caché au départ) -->
+                    <div id="exportButtons" style="display: none;">
+                        <button id="exportExcelBtn" class="btn btn-success">
+                            📊 Exporter Excel
+                        </button>
+                        <button id="exportPdfBtn" class="btn btn-info">
+                            📄 Exporter PDF
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 SECTION 2: ONGLETS POUR AFFICHER LES RÉSULTATS
+                 ======================================== -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                
+                <!-- En-tête des onglets -->
+                <div class="tabs-header">
+                    <button class="tab-button active" data-tab="calendrier">📅 Calendrier</button>
+                    <button class="tab-button" data-tab="distribution">🏟️ Distribution Terrains</button>
+                    <button class="tab-button" data-tab="statistiques">📊 Statistiques</button>
+                    <button class="tab-button" data-tab="matrice">🎯 Matrice</button>
+                </div>
+                
+                <!-- Contenu des onglets -->
+                <div class="tabs-content">
+                    
+                    <!-- ONGLET 1: Calendrier des parties -->
+                    <div id="calendrier" class="tab-panel active">
+                        <div id="calendrierContent" class="table-container">
+                            <!-- Le tableau sera généré dynamiquement par JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- ONGLET 2: Distribution des terrains -->
+                    <div id="distribution" class="tab-panel">
+                        <div id="distributionContent" class="table-container">
+                            <!-- Le tableau sera généré dynamiquement par JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- ONGLET 3: Statistiques -->
+                    <div id="statistiques" class="tab-panel">
+                        <div id="statistiquesContent" class="stats-container">
+                            <!-- Les stats seront générées dynamiquement par JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- ONGLET 4: Matrice des rencontres -->
+                    <div id="matrice" class="tab-panel">
+                        <div id="matriceContent" class="table-container">
+                            <!-- La matrice sera générée dynamiquement par JavaScript -->
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ========================================
+             PIED DE PAGE
+             ======================================== -->
+        <footer class="app-footer">
+            <p>&copy; 2025 Pickleball Sainte-Julie - Générateur de Cédules v2.0 Web</p>
+        </footer>
+
+    </div>
+
+    <!-- ========================================
+         SCRIPTS JAVASCRIPT
+         L'ordre est important!
+         ======================================== -->
+    
+    <!-- 1. Algorithme de génération du tournoi (logique Python convertie en JS) -->
+    <script src="tournament-generator.js"></script>
+    
+    <!-- 2. Gestion de l'interface utilisateur et des interactions -->
+    <script src="app.js"></script>
+    
+    <!-- 3. Export Excel et PDF -->
+    <script src="export.js"></script>
+
+</body>
+</html>
