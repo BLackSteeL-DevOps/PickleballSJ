@@ -402,7 +402,7 @@ class TournamentScheduler {
  */
 function formatPlayers(players) {
     if (!players || players.length === 0) return "-";
-    return players.map(p => `J${p}`).join(" - ");
+    return players.map(p => `${p}`).join(" - ");
 }
 
 /**
