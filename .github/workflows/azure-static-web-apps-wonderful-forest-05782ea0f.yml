@@ -1,7 +1,7 @@
 name: Azure Static Web Apps CI/CD
 
 on:
-  push:swa
+  push:
     branches:
       - main
   pull_request:
@@ -55,4 +55,5 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
+
           action: "close"
