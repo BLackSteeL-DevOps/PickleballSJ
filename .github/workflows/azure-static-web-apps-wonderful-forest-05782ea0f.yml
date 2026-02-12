@@ -44,6 +44,10 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: "." # Built app content directory - optional
           github_id_token: ${{ steps.idtoken.outputs.result }}
+          # FORCE LE SAUT DE L'ÉTAPE NODE.JS/ORYX
+          skip_app_build: true       
+          app_build_command: "true"  
+          ###### FIN DE LA CONFIGURATION ######
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
@@ -57,3 +61,4 @@ jobs:
         with:
 
           action: "close"
+
