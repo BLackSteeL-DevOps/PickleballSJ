@@ -12,6 +12,10 @@
     <!-- xlsx-js-style pour générer les fichiers Excel avec couleurs et styles -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
     
+    <!-- cdnjs pour générer les fichiers PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <!-- jsPDF pour générer les fichiers PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -54,7 +58,7 @@
                 
                 <!-- Paramètres du tournoi (gauche - 50%) -->
                 <div class="parameters-panel">
-                    <h2 class="panel-title">⚙ Paramètres du Tournoi</h2>
+                    <h2 class="panel-title">⚙ Paramètres de la cédule</h2>
                     
                     <!-- Nombre de joueurs -->
                     <div class="form-group">
@@ -97,17 +101,17 @@
                     </button>
                     
                     <!-- Bouton Regénérer (caché au départ) -->
-                    <button id="regenerateBtn" class="btn btn-warning" style="display: none;">
-                        🔄 Regénérer
+                    <button id="regenerateBtn" class="btn btn-Regenerate" style="display: none;">
+                        🔄 Regénérer la cédule
                     </button>
                     
                     <!-- Conteneur pour boutons d'export (caché au départ) -->
                     <div id="exportButtons" style="display: none;">
-                        <button id="exportExcelBtn" class="btn btn-success">
-                            📊 Exporter Excel
-                        </button>
-                        <button id="exportPdfBtn" class="btn btn-info">
+                        <button id="exportPdfBtn" class="btn btn-Regenerate">
                             📄 Exporter PDF
+                        </button>
+                        <button id="exportExcelBtn" class="btn btn-Regenerate">
+                            📊 Exporter Excel
                         </button>
                     </div>
                 </div>

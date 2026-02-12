@@ -13,6 +13,7 @@
     /* Couleurs principales basées sur le logo */
     --primary-green: #9ACD32;      /* Vert lime du logo */
     --dark-blue: #1e3a8a;          /* Bleu foncé pour les titres */
+    --light-blue: #334983;         /* Bleu clair pour les éléments interactifs */
     --light-gray: #f0f0f0;         /* Gris clair pour l'arrière-plan */
     --medium-gray: #e0e0e0;        /* Gris moyen pour les bordures */
     --dark-gray: #333;             /* Gris foncé pour le texte */
@@ -225,6 +226,16 @@ body {
     background-color: #f59e0b;
 }
 
+/* Bouton Regénérer (jaune) */
+.btn-Regenerate {
+    background-color: var(--dark-blue);
+    color: white;
+}
+
+.btn-Regenerate:hover {
+    background-color: var(--light-blue);
+}
+
 /* Bouton Export Excel (vert) */
 .btn-success {
     background-color: var(--success-green);
@@ -287,6 +298,7 @@ body {
 /* En-têtes des onglets */
 .tabs-header {
     display: flex;
+    /* background-color: var(--medium-gray); */
     background-color: var(--medium-gray);
     border-bottom: 3px solid var(--primary-green);
 }
@@ -304,12 +316,14 @@ body {
 }
 
 .tab-button:hover {
-    background-color: rgba(154, 205, 50, 0.1);
+    /* background-color: rgba(154, 205, 50, 0.1); */
+    background-color: var(--light-blue);
+    color: white;
 }
 
 .tab-button.active {
     background-color: white;
-    color: var(--primary-green);
+    color: var(--dark-blue);
     border-bottom: 3px solid var(--primary-green);
 }
 
@@ -347,7 +361,7 @@ th, td {
 
 th {
     background-color: var(--primary-green);
-    color: white;
+    color: black;
     font-weight: bold;
     position: sticky;
     top: 0;
@@ -376,8 +390,9 @@ tr:hover {
 }
 
 .resting {
-    background-color: #fecaca !important;
-    font-style: italic;
+    background-color: var(--dark-blue) !important;
+    color: white;
+    font-weight: bold;
 }
 
 /* ========================================
@@ -459,6 +474,7 @@ tr:hover {
 
 .legend-item {
     display: inline-block;
+    font-weight: bold;
     margin-right: 20px;
     margin-bottom: 10px;
     padding: 8px 15px;
@@ -549,4 +565,266 @@ tr:hover {
     height: 40px;
     animation: spin 1s linear infinite;
     margin: 20px auto;
+}
+/* Ajoutez ceci à styles.css */
+
+/* Curseur main pour montrer que c'est cliquable */
+.stat-card.interactable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.stat-card.interactable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Grille pour l'affichage multi-colonnes */
+.details-grid {
+    display: grid;
+    /* Crée autant de colonnes que possible avec une largeur min de 200px */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.detail-item {
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.detail-item.warning {
+    background-color: #fff3e0; /* Orange très pâle */
+    border-color: #ffe0b2;
+}
+
+/* Couleurs pour les détails des statistiques */
+.detail-item.perfect {
+    background-color: #e8f5e9; /* Vert très pâle */
+    border-color: #c8e6c9;
+    color: #2e7d32;
+}
+
+.detail-item.good {
+    background-color: #f1f8e9; /* Vert-jaune très pâle */
+    border-color: #dcedc8;
+    color: #558b2f;
+}
+
+.detail-item.warning {
+    background-color: #fff3e0; /* Orange très pâle */
+    border-color: #ffe0b2;
+    color: #e65100;
+}
+
+/* On réutilise la grille définie précédemment */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Entête bleue style Excel */
+.excel-header {
+    background-color: #335d88;
+    color: white;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #284a6d;
+    margin-bottom: -1px;
+}
+
+/* Structure du tableau */
+.excel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+.excel-table th, .excel-table td {
+    border: 1px solid #666;
+    padding: 6px;
+    text-align: center;
+}
+
+.excel-table th {
+    background-color: #f2f2f2;
+}
+
+.player-cell, .total-cell {
+    font-weight: bold;
+}
+
+/* Couleurs des cellules d'écart selon l'image */
+.excel-perfect {
+    background-color: #c6efce !important; /* Vert */
+    color: #006100;
+}
+
+.excel-good {
+    background-color: #ffeb9c !important; /* Jaune */
+    color: #9c6500;
+}
+
+.excel-warning {
+    background-color: #ffc7ce !important; /* Rouge/Orange */
+    color: #9c0006;
+}
+
+/* Légende sous le tableau */
+.excel-legend {
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.box {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 1px solid #666;
+}
+
+/* Grille pour l'affichage multi-colonnes (comme votre image) */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Couleurs spécifiques demandées */
+.lvl-green {
+    background-color: #c6efce !important; /* Vert (1x, 2x) */
+    color: #006100;
+    border: 1px solid #a3cfad;
+}
+
+.lvl-yellow {
+    background-color: #ffeb9c !important; /* Jaune (3x) */
+    color: #9c6500;
+    border: 1px solid #e2d18c;
+}
+
+.lvl-orange {
+    background-color: #ffcc99 !important; /* Orange (4x) */
+    color: #854d0e;
+    border: 1px solid #eab380;
+}
+
+.lvl-red {
+    background-color: #ffc7ce !important; /* Rouge (5x+) */
+    color: #9c0006;
+    border: 1px solid #ebadb4;
+}
+
+.detail-item {
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.formula-container {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15); /* Fond semi-transparent */
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.9em;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.formula-container h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-decoration: underline;
+}
+
+.formula-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.formula-container li {
+    margin-bottom: 5px;
+    font-family: 'Courier New', Courier, monospace; /* Style "code" pour les formules */
+}
+
+/* Conteneur de l'infobulle */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted white;
+    cursor: help;
+}
+
+/* Texte de l'infobulle (caché par défaut) */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position au-dessus du texte */
+    left: 50%;
+    margin-left: -125px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8em;
+    font-weight: normal;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Affichage au survol */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Assurer que les textes sont bien noirs sur fond blanc pour l'export */
+#pdf-export-zone {
+    color: black !important;
+    font-family: Arial, sans-serif;
+}
+
+/* Forcer la couleur des textes dans les conteneurs de formules pour l'export */
+#pdf-export-zone .formula-container {
+    background-color: #f0f0f0 !important; /* Gris clair au lieu de transparent */
+    color: #333 !important;
+    border: 1px solid #ccc;
+}
+
+#pdf-export-zone .quality-score {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); /* Fond clair */
+    color: black;
+    border: 1px solid #ddd;
+}
+
+/* Garder les badges colorés visibles */
+#pdf-export-zone .excel-perfect, 
+#pdf-export-zone .excel-good, 
+#pdf-export-zone .excel-warning,
+#pdf-export-zone .lvl-green,
+#pdf-export-zone .lvl-yellow,
+#pdf-export-zone .lvl-orange,
+#pdf-export-zone .lvl-red {
+    -webkit-print-color-adjust: exact; /* Force l'impression des couleurs de fond */
+    print-color-adjust: exact;
 }

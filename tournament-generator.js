@@ -356,13 +356,38 @@ class TournamentScheduler {
         const gamesValues = Object.values(analysis.gamesPlayed);
         const equityRange = Math.max(...gamesValues) - Math.min(...gamesValues);
         
-        qualityScore -= equityRange * 20;
-        qualityScore -= analysis.partnerRepeatDetails.length * 5;
-        qualityScore -= (analysis.maxPartnerRepeats > 1 ? (analysis.maxPartnerRepeats - 1) * 10 : 0);
-        qualityScore -= analysis.opponentRepeatDetails.length * 2;
-        qualityScore -= analysis.maxCourtImbalance * 3;
+        // qualityScore -= equityRange * 20;
+        // qualityScore -= analysis.partnerRepeatDetails.length * 5;
+        // qualityScore -= (analysis.maxPartnerRepeats > 1 ? (analysis.maxPartnerRepeats - 1) * 10 : 0);
+        // qualityScore -= analysis.opponentRepeatDetails.length * 2;
+        // qualityScore -= analysis.maxCourtImbalance * 3;
         
-        return Math.max(0, qualityScore);
+        // return Math.max(0, qualityScore);
+        // --- CALCUL DU SCORE DE QUALITÉ AJUSTÉ ---
+
+        // 1. Équité du temps de jeu (Poids fort : 20 pts par écart)
+        qualityScore -= equityRange * 15;
+
+        // 2. Partenaires (3 pts par paire répétée + 5 pts si 3x ou plus)
+        qualityScore -= analysis.partnerRepeatDetails.length * 3;
+        if (analysis.maxPartnerRepeats > 2) {
+            qualityScore -= (analysis.maxPartnerRepeats - 2) * 5; // Pénalité accrue pour partenaires 3x+
+        }
+
+        // 3. Adversaires (Pénalité UNIQUEMENT pour 3x et plus)
+        // On filtre pour ne garder que les répétitions problématiques
+        const severeOpponents = analysis.opponentRepeatDetails.filter(detail => detail[2] >= 3);
+
+        severeOpponents.forEach(([p1, p2, count]) => {
+            // On applique la multiplication (count x 1) comme pénalité
+            qualityScore -= (count * 1);
+        });
+
+        // 4. Déséquilibre des terrains (1 pt par écart max)
+        qualityScore -= analysis.maxCourtImbalance * 1;
+
+        // Retourner le score (minimum 0)
+        return Math.max(0, Math.round(qualityScore));
     }
 }
 

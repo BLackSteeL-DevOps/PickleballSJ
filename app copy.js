@@ -34,40 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * GESTIONNAIRE DE CLICS POUR LES CARTES STATS
- */
-function attachStatCardListeners() {
-    const cards = document.querySelectorAll('.stat-card.interactable');
-    const panels = document.querySelectorAll('.stat-detail-panel');
-
-    cards.forEach(card => {
-        card.addEventListener('click', function() {
-            // 1. Gestion de l'état visuel "actif" des cartes
-            cards.forEach(c => c.style.border = "1px solid #ddd"); // Reset bordure
-            cards.forEach(c => c.style.backgroundColor = "white"); // Reset fond
-            
-            // Style pour la carte active
-            this.style.border = "2px solid #4CAF50";
-            this.style.backgroundColor = "#f9f9f9";
-
-            // 2. Cacher tous les panneaux
-            panels.forEach(panel => panel.style.display = 'none');
-
-            // 3. Afficher le panneau correspondant
-            const targetId = this.getAttribute('data-target');
-            const targetPanel = document.getElementById(targetId);
-            if (targetPanel) {
-                targetPanel.style.display = 'block';
-                // Petite animation de fade-in
-                targetPanel.style.opacity = 0;
-                targetPanel.style.transition = "opacity 0.3s";
-                setTimeout(() => targetPanel.style.opacity = 1, 10);
-            }
-        });
-    });
-}
-
-/**
  * ATTACHER LES ÉCOUTEURS D'ÉVÉNEMENTS
  * Configure tous les boutons et onglets
  */
@@ -194,8 +160,8 @@ function displayCalendar() {
     for (let court = 1; court <= scheduler.numCourts; court++) {
         html += `<th colspan="2" style="background-color: #9ACD32; color: black;">Terrain ${court}</th>`;
     }
-
-    html += '<th style="background-color: #1e3a8a; color: white;">Banc</th>';
+    
+    html += '<th style="background-color: #ff9e4f; color: black;">Banc</th>';
     html += '</tr></thead>';
     
     // Corps du tableau
@@ -262,8 +228,8 @@ function displayDistribution() {
         
         // Colorier selon l'écart
         let cssClass = '';
-        if (ecart === 0 || ecart === 1) cssClass = 'perfect';
-        else if (ecart === 2 || ecart === 3) cssClass = 'good';
+        if (ecart === 0) cssClass = 'perfect';
+        else if (ecart === 1) cssClass = 'good';
         else cssClass = 'warning';
         
         html += `<td class="${cssClass}"><strong>${ecart}</strong></td>`;
@@ -275,9 +241,9 @@ function displayDistribution() {
     // Légende
     html += '<div class="legend">';
     html += '<h4>Légende des écarts:</h4>';
-    html += '<span class="legend-item perfect">0-1 = Parfait équilibre</span>';
-    html += '<span class="legend-item good">2-3 = Très bon équilibre</span>';
-    html += '<span class="legend-item warning">4+ = À améliorer</span>';
+    html += '<span class="legend-item perfect">0 = Parfait équilibre</span>';
+    html += '<span class="legend-item good">1 = Très bon équilibre</span>';
+    html += '<span class="legend-item warning">2+ = À améliorer</span>';
     html += '</div>';
     
     container.innerHTML = html;
@@ -293,240 +259,79 @@ function displayStatistics() {
     const gamesValues = Object.values(currentAnalysis.gamesPlayed);
     const minGames = Math.min(...gamesValues);
     const maxGames = Math.max(...gamesValues);
-    const equityRange = maxGames - minGames;
     
     let html = '';
     
-    // --- SECTION SCORE DE QUALITÉ (Transparence totale) ---
+    // Score de qualité (grand) avec explication détaillée
     html += `<div class="quality-score">`;
     html += `<h2>🏆 Score de Qualité</h2>`;
     html += `<div class="score">${qualityScore}/100</div>`;
     html += `<div class="assessment">${getQualityAssessment(qualityScore)}</div>`;
     
-    // Conteneur des détails du calcul
-    html += `<div class="formula-container">`;
-    html += `<h4>Détails du calcul (Pénalités) :</h4>`;
-    html += `<ul style="list-style: none; padding: 0; margin: 0; line-height: 1.6;">`;
+    // EXPLICATION DÉTAILLÉE DU SCORE
+    html += `<div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px; text-align: left; font-size: 14px;">`;
+   /*   html += `<strong>📖 Comment interpréter ce score?</strong><br><br>`;
+    html += `<strong>Score 100/100:</strong> Configuration PARFAITE - Tous les joueurs jouent exactement le même nombre de parties, aucun partenaire ou adversaire répété, distribution parfaite des terrains.<br><br>`;
+    html += `<strong>Score 75-99:</strong> Excellente configuration - Légères répétitions acceptables, très bon équilibre général.<br><br>`;
+    html += `<strong>Score 50-74:</strong> Bonne configuration - Quelques répétitions, équilibre correct avec compromis mineurs.<br><br>`;
+    html += `<strong>Score 0-49:</strong> Configuration avec compromis - Plusieurs répétitions ou déséquilibres importants. Cliquez "Regénérer" pour essayer d'améliorer.<br><br>`;
+    html += `<strong>⚠️ Score 0/100:</strong> Configuration TRÈS déséquilibrée - Beaucoup de répétitions, écarts importants dans le temps de jeu. Il est FORTEMENT recommandé de regénérer plusieurs fois jusqu'à obtenir un score d'au moins 60/100.`; */
+    html += `</div>`; 
+    html += `</div>`;
     
-    // 1. Équité (10 pts par écart)
-    html += `<li>`;
-    html += `<span class="tooltip"><strong class="help-cursor">Équité :</strong>`;
-    html += `  <span class="tooltiptext">Équité (Pénalité de 15 pts par point d'écart entre le joueur ayant le plus et le moins de parties)</span>`;
-    html += `</span> `;
-    html += `-${equityRange * 15} pts</li>`;
-
-    // 2. Partenaires (3 pts par paire + 5 pts bonus si 3x+)
-    // Calcul des pénalités pour l'affichage
-    let partnerBasePenalty = currentAnalysis.partnerRepeatDetails.length * 3;
-    let partnerBonusPenalty = currentAnalysis.maxPartnerRepeats > 2 ? (currentAnalysis.maxPartnerRepeats - 2) * 5 : 0;
-    let totalPartnerPenalty = partnerBasePenalty + partnerBonusPenalty;
-
-    html += `<li>`;
-    html += `<span class="tooltip"><strong class="help-cursor">Partenaires :</strong>`;
-    // Voici la structure qui manquait pour l'affichage stylisé :
-    html += `  <span class="tooltiptext">Partenaires (3 pts par paire répétée + 5 pts si 3x ou plus)</span>`;
-    html += `</span> `;
-    html += `-${totalPartnerPenalty} pts`;
-
-    if (partnerBonusPenalty > 0) {
-        html += ` <span style="font-size: 0.8em;">(incluant pénalité 3x+)</span>`;
-    }
-    html += `</li>`;
-    
-    // 3. Adversaires (Uniquement 3x et plus)
-    const severeOpponents = currentAnalysis.opponentRepeatDetails.filter(detail => detail[2] >= 3);
-    const totalOppPenalty = severeOpponents.reduce((acc, curr) => acc + (curr[2] * 1), 0);
-
-    if (totalOppPenalty > 0) {
-        html += `<li>`;
-        html += `<span class="tooltip"><strong class="help-cursor">Adversaires (3x+) :</strong>`;
-        html += `  <span class="tooltiptext">Adversaires (Pénalité de 1 pt par rencontre, uniquement si 3x ou plus)</span>`;
-        html += `</span> `;
-        html += `<span">-${totalOppPenalty} pts</span></li>`;
-    } else {
-        html += `<li>`;
-        html += `<span class="tooltip"><strong class="help-cursor">Adversaires :</strong>`;
-        html += `  <span class="tooltiptext">Aucune pénalité (aucune rencontre de 3x ou plus)</span>`;
-        html += `</span> `;
-        html += `0 pts</li>`;
-    }
-    
-    // --- 4. TERRAINS ---
-    html += `<li>`;
-    html += `<span class="tooltip"><strong class="help-cursor">Terrains :</strong>`;
-    html += `  <span class="tooltiptext">Terrains (Pénalité de 1 pt par écart entre le terrain le plus et le moins fréquenté par un joueur)</span>`;
-    html += `</span> `;
-    html += `-${currentAnalysis.maxCourtImbalance * 1} pts</li>`;
-    
-    html += `</ul>`;
-    
-    // Note de bas de carte
-    html += `<p style="font-size: 0.75em; margin-top: 10px; opacity: 0.8; border-top: 1px dashed rgba(255,255,255,0.3); padding-top: 5px;">`;
-    html += `* Les rencontres d'adversaires 2x ne sont plus pénalisées car cela se produit trop fréquemment.`;
-    html += `</p>`;
-    
-    html += `</div>`; // Fin formula-container
-    html += `</div>`; // Fin quality-score
-    
-    // --- CARTES CLIQUABLES ---
+    // Cartes de statistiques (GRILLE 2x2)
     html += `<div class="stats-container">`;
     
-    // Carte 1: Équité (Temps de jeu)
-    html += `<div class="stat-card interactable" data-target="detail-equity">`;
+    // Carte 1: Équité
+    html += `<div class="stat-card">`;
     html += `<h3>📊 Équité du temps de jeu</h3>`;
     html += `<div class="stat-value">${maxGames - minGames}</div>`;
-    html += `<div class="stat-label">Écart parties (cliquez pour voir)</div>`;
+    html += `<div class="stat-label">Écart parties (0 = parfait)</div>`;
     html += `</div>`;
     
     // Carte 2: Partenaires
-    html += `<div class="stat-card interactable" data-target="detail-partners">`;
+    html += `<div class="stat-card">`;
     html += `<h3>🤝 Répétitions partenaires</h3>`;
     html += `<div class="stat-value">${currentAnalysis.maxPartnerRepeats}</div>`;
-    html += `<div class="stat-label">Max répétitions (cliquez pour voir)</div>`;
+    html += `<div class="stat-label">Max répétitions (1 = parfait)</div>`;
     html += `</div>`;
     
     // Carte 3: Terrains
-    html += `<div class="stat-card interactable" data-target="detail-courts">`;
+    html += `<div class="stat-card">`;
     html += `<h3>🏟️ Équilibre terrains</h3>`;
     html += `<div class="stat-value">${currentAnalysis.maxCourtImbalance}</div>`;
-    html += `<div class="stat-label">Écart max (cliquez pour voir)</div>`;
+    html += `<div class="stat-label">Écart max (0 = parfait)</div>`;
     html += `</div>`;
     
-    // Carte 4: Adversaires
-    html += `<div class="stat-card interactable" data-target="detail-opponents">`;
+    // Carte 4: Répétitions adversaires (MAX au lieu du nombre de paires)
+    html += `<div class="stat-card">`;
     html += `<h3>⚔️ Répétitions adversaires</h3>`;
     html += `<div class="stat-value">${currentAnalysis.maxOpponentRepeats}</div>`;
-    html += `<div class="stat-label">Max répétitions (cliquez pour voir)</div>`;
+    html += `<div class="stat-label">Max répétitions (1 = parfait)</div>`;
     html += `</div>`;
     
-    html += `</div>`; // Fin stats-container
+    html += `</div>`;
     
-    // --- SECTION DÉTAILS (Cachés par défaut) ---
-    html += `<div id="stats-details-container" style="margin-top: 20px;">`;
-
-    // 1. Détail Équité
-    html += `<div id="detail-equity" class="stat-detail-panel" style="display:none;">`;
-    html += `<h4>📊 Détail des parties jouées par joueur:</h4>`;
-    html += `<div class="details-grid">`; 
-
-    for (let p = 1; p <= scheduler.numPlayers; p++) {
-        const games = currentAnalysis.gamesPlayed[p];
-        
-        let style = '';
-        // SI l'écart est de 0 (Parfaite égalité)
-        if (minGames === maxGames) {
-            style = 'color: green; font-weight: bold;'; // Tout le monde en vert
-        } 
-        // SINON, on applique la logique de distinction
-        else {
-            if (games === minGames) style = 'color: red;';
-            if (games === maxGames) style = 'color: green;';
-        }
-
-        html += `<div style="${style} padding: 5px; background: rgba(0,0,0,0.05); border-radius: 4px;"><strong>J${p}</strong> : ${games} parties</div>`;
-    }
-    html += `</div></div>`;
-
-    // 2. Détail Partenaires
-    html += `<div id="detail-partners" class="stat-detail-panel" style="display:none;">`;
+    // Détails des répétitions
     if (currentAnalysis.partnerRepeatDetails.length > 0) {
-        html += `<h4>🤝 Paires ayant joué plusieurs fois ensemble:</h4>`;
-        html += `<div class="details-grid">`;
+        html += `<div class="legend">`;
+        html += `<h4>🤝 Détail des répétitions de partenaires:</h4>`;
         currentAnalysis.partnerRepeatDetails.forEach(([p1, p2, count]) => {
-            html += `<div class="detail-item warning">J${p1} + J${p2} : <strong>${count}x</strong></div>`;
+            html += `<div>J${p1} + J${p2}: <strong>${count} fois</strong></div>`;
         });
         html += `</div>`;
-    } else {
-        html += `<div class="perfect-message">Aucune répétition de partenaire ! Bravo.</div>`;
     }
-    html += `</div>`;
-
-    // 3. Détail Terrains (Style Excel avec tableau)
-    html += `<div id="detail-courts" class="stat-detail-panel" style="display:none;">`;
-    html += `<div class="excel-header">📊 DISTRIBUTION DES JOUEURS PAR TERRAIN</div>`;
-    html += `<table class="excel-table">`;
-    
-    // En-tête du tableau
-    html += `<thead><tr>`;
-    html += `<th>Joueur</th>`;
-    for (let court = 1; court <= scheduler.numCourts; court++) {
-        html += `<th>Terrain ${court}</th>`;
-    }
-    html += `<th>Total</th>`;
-    html += `<th>Écart</th>`;
-    html += `</tr></thead>`;
-    
-    // Corps du tableau
-    html += `<tbody>`;
-    for (let player = 1; player <= scheduler.numPlayers; player++) {
-        const counts = [];
-        html += `<tr>`;
-        html += `<td class="player-cell">J${player}</td>`;
-        
-        for (let court = 1; court <= scheduler.numCourts; court++) {
-            const val = currentAnalysis.courtDistribution[player][court] || 0;
-            counts.push(val);
-            html += `<td>${val}</td>`;
-        }
-        
-        const total = counts.reduce((a, b) => a + b, 0);
-        const ecart = Math.max(...counts) - Math.min(...counts);
-        
-        // Nouvelle logique de couleur de l'écart :
-        // 0 ou 1 = perfect (Vert)
-        // 2 ou 3 = good (Jaune)
-        // 4 et plus = warning (Rouge)
-        let ecartClass = 'excel-warning'; // Par défaut pour 4+
-        if (ecart <= 1) {
-            ecartClass = 'excel-perfect';
-        } else if (ecart <= 3) {
-            ecartClass = 'excel-good';
-        }
-
-        html += `<td class="total-cell">${total}</td>`;
-        html += `<td class="${ecartClass}">${ecart}</td>`;
-        html += `</tr>`;
-    }
-    html += `</tbody></table>`;
-    
-    // Légende (style Excel)
-    html += `<div class="excel-legend">`;
-    html += `<div class="legend-row"><span class="box excel-perfect"></span> 0 ou 1 = Parfait équilibre</div>`;
-    html += `<div class="legend-row"><span class="box excel-good"></span> 2 ou 3 = Très bon équilibre</div>`;
-    html += `<div class="legend-row"><span class="box excel-warning"></span> 4+ = À améliorer</div>`;
-    html += `</div>`;
-    html += `</div>`;
-
-// 4. Détail Adversaires (Trié par répétitions + Charte de couleurs)
-    html += `<div id="detail-opponents" class="stat-detail-panel" style="display:none;">`;
     
     if (currentAnalysis.opponentRepeatDetails.length > 0) {
-        html += `<h4>⚔️ Détail des répétitions d'adversaires (Trié du plus fréquent au moins fréquent):</h4>`;
-        html += `<div class="details-grid">`;
-
-        // TRI : On trie par le nombre de répétitions (index 2) de façon descendante
-        const sortedOpponents = [...currentAnalysis.opponentRepeatDetails].sort((a, b) => b[2] - a[2]);
-
-        sortedOpponents.forEach(([p1, p2, count]) => {
-            // Application de la charte de couleurs demandée
-            let colorClass = '';
-            if (count >= 5) colorClass = 'lvl-red';      // 5x et plus
-            else if (count === 4) colorClass = 'lvl-orange'; // 4x
-            else if (count === 3) colorClass = 'lvl-yellow'; // 3x
-            else colorClass = 'lvl-green';               // 1x et 2x
-
-            html += `<div class="detail-item ${colorClass}">J${p1} vs J${p2} : <strong>${count}x</strong></div>`;
+        html += `<div class="legend">`;
+        html += `<h4>⚔️ Détail des répétitions d'adversaires:</h4>`;
+        currentAnalysis.opponentRepeatDetails.forEach(([p1, p2, count]) => {
+            html += `<div>J${p1} vs J${p2}: <strong>${count} fois</strong></div>`;
         });
         html += `</div>`;
-    } else {
-        html += `<div class="perfect-message">Aucune répétition d'adversaire.</div>`;
     }
-    html += `</div>`;
     
     container.innerHTML = html;
-
-    // Attacher les événements click APRES avoir généré le HTML
-    attachStatCardListeners();
 }
 
 /**
